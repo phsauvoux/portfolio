@@ -1,1 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <!-- Pour un affichage responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bureau Simulé</title>
+  <style>
+    /* Curseur personnalisé style Windows 98 */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #2b2b2b;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      cursor: url('win98-cursor.cur'), auto;
+    }
+
+    /* Style des fenêtres */
+    .window {
+      position: absolute;
+      background: #fff;
+      border: 1px solid #ccc;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .titlebar {
+      background: #007acc;
+      color: #fff;
+      padding: 5px 10px;
+      cursor: move;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 5px;
+    }
+
+    .window-controls button {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 0 5px;
+    }
+
+    .content {
+      padding: 10px;
+      overflow: auto;
+    }
+
+    .maximized {
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* Ajustements responsives pour les fenêtres */
+    @media (max-width: 600px) {
+      .window {
+        width: calc(100% - 20px) !important;
+        left: 10px !important;
+        top: 10px !important;
+        height: auto !important;
+      }
+      .titlebar {
+        font-size: 14px;
+        padding: 5px;
+      }
+      .content {
+        height: auto;
+      }
+    }
+
+    /* Style du bureau pour les icônes */
+    .desktop-icons {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .desktop-icon {
+      width: 60px;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
+    }
+    .desktop-icon .icon {
+      font-size: 40px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Icônes du bureau -->
+  <div class="desktop-icons">
+    <div class="desktop-icon" data-window="window1">
+      <div class="icon">🪟</div>
+      <span>Fenêtre 1</span>
+    </div>
+    <div class="desktop-icon" data-window="window2">
+      <div class="icon">🪟</div>
+      <span>Fenêtre 2</span>
+    </div>
+  </div>
+
+  <script>
+    // Gestion du z-index pour placer la fenêtre active devant les autres
+    let currentZIndex = 1;
+
+    // Définitions des fenêtres (titre, contenu et position initiale)
+    const windowDefinitions = {
+      window1: {
+        title: "Fenêtre 1",
+        content: "Contenu de la fenêtre 1.",
+        left: "50px",
+        top: "50px",
+        width: "300px",
+        height: "200px"
+      },
+      window2: {
+        title: "Fenêtre 2",
+        content: "Contenu de la fenêtre 2.",
+        left: "200px",
+        top: "150px",
+        width: "300px",
+        height: "200px"
+      }
+    };
+
+    /**
+     * Crée ou affiche une fenêtre en fonction de son identifiant.
+     */
+    function createWindow(windowId) {
+      // Si la fenêtre existe déjà, on la remet au premier plan.
+      let win = document.getElementById(windowId);
+      if (win) {
+        win.style.zIndex = ++currentZIndex;
+        return;
+      }
+      const def = windowDefinitions[windowId];
+      if (!def) return;
+
+      // Création de la fenêtre
+      win = document.createElement("div");
+      win.className = "window";
+      win.id = windowId;
+      win.style.left = def.left;
+      win.style.top = def.top;
+      win.style.width = def.width;
+      win.style.height = def.height;
+
+      // Contenu HTML de la fenêtre
+      win.innerHTML = `
+        <div class="titlebar">
+          <span>${def.title}</span>
+          <div class="window-controls">
+            <button class="maximize">🗖</button>
+            <button class="close">✖</button>
+          </div>
+        </div>
+        <div class="content">
+          ${def.content}
+        </div>
+      `;
+      document.body.appendChild(win);
+      // Rendre la fenêtre draggable et ajouter les événements sur les boutons
+      makeDraggable(win);
+    }
+
+    /**
+     * Rends une fenêtre draggable et ajoute les fonctionnalités
+     * pour la mettre au premier plan, la fermer et l'agrandir.
+     */
+    function makeDraggable(element) {
+      let isDragging = false;
+      let offset = { x: 0, y: 0 };
+      const titlebar = element.querySelector('.titlebar');
+
+      // Démarrage du déplacement
+      titlebar.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offset.x = e.clientX - element.offsetLeft;
+        offset.y = e.clientY - element.offsetTop;
+        element.style.zIndex = ++currentZIndex;
+      });
+
+      // Mettre la fenêtre au premier plan lors d'un clic n'importe où dessus
+      element.addEventListener('mousedown', () => {
+        element.style.zIndex = ++currentZIndex;
+      });
+
+      // Déplacement de la fenêtre
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        if (element.classList.contains('maximized')) return;
+        element.style.left = (e.clientX - offset.x) + 'px';
+        element.style.top = (e.clientY - offset.y) + 'px';
+      });
+
+      // Fin du déplacement
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+
+      // Bouton de fermeture
+      const closeButton = element.querySelector('.close');
+      closeButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        element.remove();
+      });
+
+      // Bouton d'agrandissement (maximiser/restaurer)
+      const maximizeButton = element.querySelector('.maximize');
+      maximizeButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (element.classList.contains('maximized')) {
+          // Restaurer la taille et la position d'origine
+          element.style.left = element.dataset.originalLeft;
+          element.style.top = element.dataset.originalTop;
+          element.style.width = element.dataset.originalWidth;
+          element.style.height = element.dataset.originalHeight;
+          element.classList.remove('maximized');
+        } else {
+          // Sauvegarder la position et la taille actuelles
+          element.dataset.originalLeft = element.style.left;
+          element.dataset.originalTop = element.style.top;
+          element.dataset.originalWidth = element.style.width;
+          element.dataset.originalHeight = element.style.height;
+          // Maximiser la fenêtre
+          element.style.left = 0;
+          element.style.top = 0;
+          element.style.width = "100%";
+          element.style.height = "100%";
+          element.classList.add('maximized');
+        }
+      });
+    }
+
+    // Événement sur les icônes du bureau pour ouvrir la fenêtre correspondante
+    document.querySelectorAll('.desktop-icon').forEach(icon => {
+      icon.addEventListener('click', () => {
+        const windowId = icon.getAttribute('data-window');
+        createWindow(windowId);
+      });
+    });
+  </script>
+</body>
+</html>
 
