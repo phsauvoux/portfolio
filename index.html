@@ -104,11 +104,11 @@
   <!-- Icônes du bureau -->
   <div class="desktop-icons">
     <div class="desktop-icon" data-window="window1">
-      <div class="icon">🪟</div>
+      <div class="icon">📄</div>
       <span>Expériences et Formations</span>
     </div>
     <div class="desktop-icon" data-window="window2">
-      <div class="icon">🪟</div>
+      <div class="icon">📂</div>
       <span>Travaux</span>
     </div>
   </div>
@@ -120,7 +120,7 @@
     // Définitions des fenêtres (titre, contenu et position initiale)
     const windowDefinitions = {
       window1: {
-        title: "Fenêtre 1",
+        title: "Expériences et Formations",
         content: `
         <h1 id="exp-riences">Expériences</h1>
         <h6 id="ao-t-2023-ao-t-2025">Août 2023 ➝ Août 2025</h6>
@@ -132,16 +132,18 @@
         `,
         left: "50px",
         top: "50px",
-        width: "300px",
-        height: "200px"
+        width: "auto",
+        height: "auto",
+        overflow: "scroll"
       },
       window2: {
-        title: "Fenêtre 2",
+        title: "Travaux",
         content: "Contenu de la fenêtre 2.",
         left: "200px",
         top: "150px",
-        width: "300px",
-        height: "200px"
+        width: "auto",
+        height: "auto" ,
+        overflow: "scroll"
       }
     };
 
