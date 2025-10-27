@@ -5,7 +5,7 @@
     // Définitions des fenêtres (titre, contenu et position initiale)
     const windowDefinitions = {
       window1: {
-        title: "📄 Expériences professionnelles",
+        title: "CV.doc",
         content: `
         <div style="display: flex; margin-bottom: 20px; height: 70px; padding-top: 10px;" class="tabs">
 
@@ -125,7 +125,7 @@
         overflow: "auto",
       },
       window2: {
-        title: "📂 Travaux",
+        title: "Travaux",
         content: `
         <div style="display: flex; height: 100%;" class="explorateur_cont">
           <div class="sidebar_explorateur" style="width: 200px; border-right: 1px solid #ccc; padding: 10px; overflow-y: auto;">
@@ -171,7 +171,7 @@
         backgroundColor: "#1F1F1F"
     },
       window4: {
-        title: "✉️ Contact",
+        title: "Contact",
         content: `
         <h2 style="text-align:center;">
         Contactez moi ! 🤝
@@ -209,7 +209,7 @@
         overflow: "scroll"
       },
        window5: {
-        title: "💿 Ball.exe",
+        title: "Ball.exe",
         content: `
         <a style="font-size: 6.8em;">
         🏐
@@ -223,7 +223,7 @@
         overflow: "scroll",
     },
     window6: {
-        title: "🖥️ Terminal",
+        title: "Terminal",
         content: `
         Nom: Pierre-Henri Sauvoux <br>
         Profession: Designer Graphique <br>
@@ -231,7 +231,7 @@
         `,
         left: "350px",
         top: "250px",
-        width: "auto",
+        width: "420px",
         height: "auto",
         padding: "0px",
         overflow: "scroll",
@@ -316,8 +316,8 @@ function createWindow(windowId) {
         <div class="titlebar">
           <span>${def.title}</span>
           <div class="window-controls">
-            <button class="maximize">⦿</button>
-            <button class="close">☒</button>
+            <button class="maximize" style="color: green;">⦿</button>
+            <button class="close" style="color: red;">⦿</button>
           </div>
         </div>
         <div class="content" style="padding: 10px; font-size: 10px; text-align: center;">
@@ -330,8 +330,8 @@ function createWindow(windowId) {
         <div class="titlebar" style="background-color: #000000;">
           <span>${def.title}</span>
           <div class="window-controls">
-            <button class="maximize">⦿</button>
-            <button class="close">☒</button>
+            <button class="maximize" style="color: green;">⦿</button>
+            <button class="close" style="color: red;">⦿</button>
           </div>
         </div>
         <div class="content" style="padding: 25px; font-family: 'Space Mono'; color: #b3b3b3ff;">
@@ -351,8 +351,8 @@ function createWindow(windowId) {
         <div class="titlebar" >
           <span>${def.title}</span>
           <div class="window-controls">
-            <button class="maximize">⦿</button>
-            <button class="close">☒</button>
+            <button class="maximize" style="color: green;">⦿</button>
+            <button class="close" style="color: red;">⦿</button>
           </div>
         </div>
         <div class="content" style="padding: 5px 25px 25px 25px; overflow: auto;">
@@ -364,8 +364,8 @@ function createWindow(windowId) {
         <div class="titlebar" >
           <span>${def.title}</span>
           <div class="window-controls">
-            <button class="maximize">⦿</button>
-            <button class="close">☒</button>
+            <button class="maximize" style="color: green;">⦿</button>
+            <button class="close" style="color: red;">⦿</button>
           </div>
         </div>
         <div class="content" style="padding: 25px; overflow: auto;">
@@ -643,3 +643,67 @@ function openTab(evt, tabName) {
       document.getElementById(tabName).style.display = "block";
       evt.currentTarget.className += " active";
     }
+
+// desktop area effect
+    
+const desktop = document.getElementById('desktop-area');
+let rectangle = null; 
+let isDrawing = false; 
+let startX, startY; 
+const icons = document.querySelectorAll('.ico');
+
+desktop.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+
+    desktop.classList.add('selection-active');
+
+    isDrawing = true;
+    startX = e.clientX;
+    startY = e.clientY;
+
+    if (!rectangle) {
+        rectangle = document.createElement('div');
+        rectangle.id = 'selection-rectangle';
+        desktop.appendChild(rectangle);
+    }
+
+    icons.forEach(icon => icon.style.pointerEvents = 'none');
+
+    rectangle.style.display = 'block';
+    rectangle.style.left = startX + 'px';
+    rectangle.style.top = startY + 'px';
+    rectangle.style.width = '0px';
+    rectangle.style.height = '0px';
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (!isDrawing) return;
+
+    const currentX = e.clientX;
+    const currentY = e.clientY;
+
+    const width = Math.abs(currentX - startX);
+    const height = Math.abs(currentY - startY);
+    const left = Math.min(startX, currentX);
+    const top = Math.min(startY, currentY);
+
+    rectangle.style.width = width + 'px';
+    rectangle.style.height = height + 'px';
+    rectangle.style.left = left + 'px';
+    rectangle.style.top = top + 'px';
+
+});
+
+document.addEventListener('mouseup', () => {
+    if (!isDrawing) return;
+
+    isDrawing = false;
+    
+    desktop.classList.remove('selection-active');
+    
+    if (rectangle) {
+        rectangle.style.display = 'none';
+    }
+
+    icons.forEach(icon => icon.style.pointerEvents = 'auto');
+});
