@@ -14,12 +14,51 @@ cursor: url("img/cursor.svg"), default;
   src: url(https://cdn.jsdelivr.net/fontsource/fonts/bricolage-grotesque:vf@latest/latin-wght-normal.woff2) format('woff2-variations');
   unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
+#desktop-area {
+  position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(207, 3, 3, 0);
+    z-index: 1;
+}
+.noselect {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+#selection-rectangle {
+    position: absolute;
+    background-color: rgba(71, 71, 71, 0.1); /* Bleu très transparent */
+    border: 1px dashed rgb(190, 190, 190); /* Bordure pointillée bleue */
+    pointer-events: none;
+    display: none; 
+}
+
 .bg-cont {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   height: 100%;
+  z-index: 0;
+}
+
+.window,
+.windowGravity,
+.titlebar,
+.content,
+.desktop-icons,
+.desktop-icons2,
+.desktop-icons3,
+.desktop-icons4,
+.tabs,
+.tab-content,
+.apps {
+  position: relative;
+  z-index: 2;
 }
 
 .bg-cont2 {
@@ -76,14 +115,15 @@ html, body {
   position: absolute;
   background: var(--gris);
   border: 1px solid #ccc;
-  box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.74);
+  border-radius: 5px;
 }
 
 .windowGravity {
   position: absolute;
   background: var(--gris);
   border: 1px solid #ccc;
-  box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.747);
 }
 
 .titlebar {
@@ -164,36 +204,50 @@ html, body {
   left: 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
   cursor: url("img/select.svg"), pointer;
+  text-align: center;
 }
 .desktop-icons2 {
   position: absolute;
   bottom: 20px;
-  left: 110px;
+  left: 120px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   cursor: url("img/select.svg"), pointer;
+  text-align: center;
 }
 .desktop-icons3 {
   position: absolute;
-  bottom: 100px;
-  left: 110px;
+  bottom: 110px;
+  left: 120px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   cursor: url("img/select.svg"), pointer;
+  text-align: center;
 }
 
 .desktop-icons4 {
   position: absolute;
-  bottom: 185px;
-  left: 110px;
+  bottom: 210px;
+  left: 120px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   cursor: url("img/select.svg"), pointer;
+  text-align: center;
+}
+
+.ico {
+  display: flex;
+  flex-direction: column;
+}
+
+.ico img {
+  max-width: 55px;
+  margin-bottom: -5px;
 }
 
 @media (max-width: 600px) {
@@ -201,7 +255,7 @@ html, body {
     bottom: 20px;
   }
   .desktop-icons4 {
-    bottom: 103px;
+    bottom: 110px;
   }
 }
 .desktop-icon {
